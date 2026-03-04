@@ -100,19 +100,19 @@ export default function Dashboard() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="bg-card p-4 rounded-2xl border border-border shadow-sm flex items-center gap-4"
+              className="bg-card p-4 rounded-2xl border border-border shadow-sm flex items-center md:flex-row flex-col gap-4"
             >
-              <div className={`p-2 rounded-lg ${stat.bg} ${stat.color}`}>
-                <stat.icon className="w-5 h-5" />
-              </div>
-              <div>
+              <div className="flex items-center gap-2">
+                <div className={`p-2 rounded-lg ${stat.bg} ${stat.color}`}>
+                  <stat.icon className="w-5 h-5" />
+                </div>
                 <p className="text-xs text-muted-foreground">
                   <FormattedMessage id={stat.labelId} />
                 </p>
-                <p className={`font-semibold ${stat.color}`}>
-                  <FormattedMessage id={stat.valueId} />
-                </p>
               </div>
+              <p className={`font-semibold text-xl md:text-lg ${stat.color}`}>
+                <FormattedMessage id={stat.valueId} />
+              </p>
             </motion.div>
           ))}
         </div>
