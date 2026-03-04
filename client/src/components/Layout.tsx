@@ -5,15 +5,27 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useCustomer } from '@/hooks/use-banking';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { clearAccessToken } from '@/lib/auth';
+import { useIntl } from 'react-intl';
+import { useLocale } from '@/i18n/IntlContext';
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 const navItems = [
-  { name: 'Vista General', shortName: 'Inicio', path: '/', icon: LayoutDashboard },
-  // { name: "Cuentas", shortName: "Cuentas", path: "/accounts", icon: CreditCard },
-  { name: 'Transferencias', shortName: 'Enviar', path: '/transfers', icon: ArrowRightLeft },
+  {
+    path: '/',
+    icon: LayoutDashboard,
+    labelId: 'nav.dashboard',
+    shortLabelId: 'nav.dashboard.short',
+  },
+  // { path: "/accounts", icon: CreditCard, labelId: "nav.accounts", shortLabelId: "nav.accounts.short" },
+  {
+    path: '/transfers',
+    icon: ArrowRightLeft,
+    labelId: 'nav.transfers',
+    shortLabelId: 'nav.transfers.short',
+  },
 ];
 
 function UserAvatar({
@@ -45,6 +57,8 @@ export default function Layout({ children }: LayoutProps) {
   const [isDark, setIsDark] = useState(false);
   const { data: customer } = useCustomer();
   const isMobile = useIsMobile();
+  const intl = useIntl();
+  const { locale, setLocale } = useLocale();
 
   useEffect(() => {
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
@@ -70,8 +84,17 @@ export default function Layout({ children }: LayoutProps) {
   const goToSettings = () => setLocation('/settings');
 
   const pageTitle =
-    navItems.find((i) => i.path === location)?.name ||
-    (location === '/settings' ? 'Ajustes' : 'Dashboard');
+    navItems.find((i) => i.path === location)?.labelId
+      ? intl.formatMessage({
+          id: navItems.find((i) => i.path === location)!.labelId,
+        })
+      : location === '/settings'
+        ? intl.formatMessage({ id: 'layout.settings' })
+        : 'Dashboard';
+
+  const toggleLocale = () => {
+    setLocale(locale === 'es' ? 'en' as const : 'es');
+  };
 
   return (
     <div className="min-h-screen bg-background flex flex-col md:flex-row overflow-hidden">
@@ -83,7 +106,13 @@ export default function Layout({ children }: LayoutProps) {
           </div>
           <span className="font-display font-bold text-lg">oBank</span>
         </div>
-        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={toggleLocale}
+              className="px-2 py-1 rounded-full bg-card border border-border text-xs font-semibold text-muted-foreground hover:text-foreground hover:shadow-sm transition-all"
+            >
+              {locale.toUpperCase()}
+            </button>
           <button
             onClick={toggleTheme}
             className="p-2 text-muted-foreground hover:text-foreground transition-colors"
@@ -100,7 +129,9 @@ export default function Layout({ children }: LayoutProps) {
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-primary-foreground font-bold shadow-lg shadow-primary/30">
             oB
           </div>
-          <span className="font-display font-bold text-2xl tracking-tight">oBank</span>
+              <span className="font-display font-bold text-2xl tracking-tight">
+                {intl.formatMessage({ id: 'app.name' })}
+              </span>
         </div>
 
         <nav className="flex flex-col gap-2 flex-1">
@@ -128,7 +159,9 @@ export default function Layout({ children }: LayoutProps) {
                     isActive ? '' : 'group-hover:scale-110 transition-transform'
                   }`}
                 />
-                <span className="relative z-10">{item.name}</span>
+                <span className="relative z-10">
+                  {intl.formatMessage({ id: item.labelId })}
+                </span>
               </Link>
             );
           })}
@@ -147,9 +180,12 @@ export default function Layout({ children }: LayoutProps) {
             <UserAvatar customer={customer} />
             <div className="flex flex-col min-w-0">
               <span className="text-sm font-semibold text-foreground leading-tight truncate">
-                User
+                {customer?.name ||
+                  intl.formatMessage({ id: 'layout.user.placeholder' })}
               </span>
-              <span className="text-xs text-muted-foreground">Cliente Premium</span>
+              <span className="text-xs text-muted-foreground">
+                {intl.formatMessage({ id: 'layout.customer.premium' })}
+              </span>
             </div>
           </button>
           <button
@@ -157,7 +193,7 @@ export default function Layout({ children }: LayoutProps) {
             className="flex items-center gap-3 px-4 py-3 rounded-xl text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-all duration-200"
           >
             <LogOut className="w-5 h-5" />
-            <span>Cerrar Sesión</span>
+            <span>{intl.formatMessage({ id: 'layout.logout' })}</span>
           </button>
         </div>
       </aside>
@@ -174,6 +210,12 @@ export default function Layout({ children }: LayoutProps) {
             {pageTitle}
           </h1>
           <div className="flex items-center gap-4">
+            <button
+              onClick={toggleLocale}
+              className="px-3 py-1 mr-2 rounded-full bg-card border border-border text-xs font-semibold text-muted-foreground hover:text-foreground hover:shadow-sm transition-all"
+            >
+              {locale.toUpperCase()}
+            </button>
             <button
               onClick={toggleTheme}
               className="p-2.5 rounded-full bg-card border border-border text-muted-foreground hover:text-foreground hover:shadow-md transition-all"
@@ -232,7 +274,7 @@ export default function Layout({ children }: LayoutProps) {
                     isActive ? 'text-primary' : 'text-muted-foreground'
                   }`}
                 >
-                  {item.shortName}
+                  {intl.formatMessage({ id: item.shortLabelId })}
                 </span>
               </Link>
             );

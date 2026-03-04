@@ -5,6 +5,7 @@ import TransactionList from '@/components/TransactionList';
 import { Activity, TrendingUp, Wallet } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { Account } from '@shared/schema';
+import { FormattedMessage } from 'react-intl';
 
 const mockAccounts: Account[] = [
   {
@@ -27,23 +28,12 @@ const mockAccounts: Account[] = [
     status: 'Active',
     openedAt: new Date(),
   },
-  {
-    id: 3,
-    customerId: 1,
-    accountNumber: '5555666677778888',
-    accountType: 'Investment',
-    balance: '860000.75',
-    currency: 'USD',
-    status: 'Active',
-    openedAt: new Date(),
-  },
 ];
 
 export default function Dashboard() {
   const { isLoading: loadingCustomer } = useCustomer();
   const { data: accounts, isLoading: loadingAccounts } = useAccounts();
 
-  // Get transactions for the first (primary) account
   const primaryAccount = accounts?.[0];
   const { isLoading: loadingTx } = useTransactions(primaryAccount?.id);
 
@@ -65,9 +55,11 @@ export default function Dashboard() {
         {/* Welcome Section */}
         <section className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
           <div>
-            <p className="text-muted-foreground">Good morning,</p>
+            <p className="text-muted-foreground">
+              <FormattedMessage id="dashboard.greeting" />
+            </p>
             <h2 className="font-display text-3xl md:text-4xl font-bold text-foreground mt-1">
-              User
+              <FormattedMessage id="dashboard.greeting.user" />
             </h2>
           </div>
           <div className="bg-card px-6 py-4 rounded-2xl border border-border shadow-sm flex items-center gap-4">
@@ -75,8 +67,12 @@ export default function Dashboard() {
               <Wallet className="w-6 h-6" />
             </div>
             <div>
-              <p className="text-sm text-muted-foreground">Total Portfolio</p>
-              <p className="font-display text-2xl font-bold text-foreground">$1,000,000.00</p>
+              <p className="text-sm text-muted-foreground">
+                <FormattedMessage id="dashboard.portfolio.label" />
+              </p>
+              <p className="font-display text-2xl font-bold text-foreground">
+                <FormattedMessage id="dashboard.portfolio.value" />
+              </p>
             </div>
           </div>
         </section>
@@ -85,15 +81,15 @@ export default function Dashboard() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {[
             {
-              label: 'Income this month',
-              value: '+$4,250.00',
+              labelId: 'dashboard.income.label',
+              valueId: 'dashboard.income.value',
               icon: TrendingUp,
               color: 'text-emerald-500',
               bg: 'bg-emerald-500/10',
             },
             {
-              label: 'Spending',
-              value: '-$1,840.20',
+              labelId: 'dashboard.spending.label',
+              valueId: 'dashboard.spending.value',
               icon: Activity,
               color: 'text-blue-500',
               bg: 'bg-blue-500/10',
@@ -110,8 +106,12 @@ export default function Dashboard() {
                 <stat.icon className="w-5 h-5" />
               </div>
               <div>
-                <p className="text-xs text-muted-foreground">{stat.label}</p>
-                <p className={`font-semibold ${stat.color}`}>{stat.value}</p>
+                <p className="text-xs text-muted-foreground">
+                  <FormattedMessage id={stat.labelId} />
+                </p>
+                <p className={`font-semibold ${stat.color}`}>
+                  <FormattedMessage id={stat.valueId} />
+                </p>
               </div>
             </motion.div>
           ))}
@@ -120,7 +120,9 @@ export default function Dashboard() {
         {/* Accounts Overview */}
         <section>
           <div className="flex justify-between items-center mb-6">
-            <h3 className="font-display text-xl font-bold text-foreground">Your Accounts</h3>
+            <h3 className="font-display text-xl font-bold text-foreground">
+              <FormattedMessage id="dashboard.accounts.title" />
+            </h3>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -143,7 +145,9 @@ export default function Dashboard() {
         {/* Recent Transactions */}
         <section>
           <div className="flex justify-between items-center mb-6">
-            <h3 className="font-display text-xl font-bold text-foreground">Recent Activity</h3>
+            <h3 className="font-display text-xl font-bold text-foreground">
+              <FormattedMessage id="dashboard.activity.title" />
+            </h3>
           </div>
 
           {loadingTx ? (

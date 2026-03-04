@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { Landmark, Lock, User } from 'lucide-react';
 import { isAuthenticated, setAccessToken } from '@/lib/auth';
+import { useIntl, FormattedMessage } from 'react-intl';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -14,6 +15,7 @@ export default function Login() {
   const [isLoading, setIsLoading] = useState(false);
   const [, setLocation] = useLocation();
   const { toast } = useToast();
+  const intl = useIntl();
 
   useEffect(() => {
     // Si ya está autenticado, manda directo al dashboard
@@ -31,14 +33,18 @@ export default function Login() {
       if (username === 'admin' && password === 'admin') {
         setAccessToken('mock_access_token');
         toast({
-          title: '¡Bienvenido de nuevo!',
-          description: 'Has iniciado sesión correctamente.',
+          title: intl.formatMessage({ id: 'login.toast.success.title' }),
+          description: intl.formatMessage({
+            id: 'login.toast.success.description',
+          }),
         });
         setLocation('/');
       } else {
         toast({
-          title: 'Error de acceso',
-          description: 'Credenciales inválidas. Prueba con admin/admin.',
+          title: intl.formatMessage({ id: 'login.toast.error.title' }),
+          description: intl.formatMessage({
+            id: 'login.toast.error.description',
+          }),
           variant: 'destructive',
         });
       }
@@ -57,20 +63,26 @@ export default function Login() {
           <div className="w-12 h-12 bg-primary rounded-xl flex items-center justify-center mb-4 shadow-lg shadow-primary/20">
             <Landmark className="text-primary-foreground w-6 h-6" />
           </div>
-          <CardTitle className="text-2xl font-bold tracking-tight">BIAN Bank</CardTitle>
+          <CardTitle className="text-2xl font-bold tracking-tight">
+            <FormattedMessage id="login.title" />
+          </CardTitle>
           <CardDescription className="text-muted-foreground">
-            Accede a tu banca privada premium
+            <FormattedMessage id="login.subtitle" />
           </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleLogin} className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="username">Usuario</Label>
+              <Label htmlFor="username">
+                <FormattedMessage id="login.username.label" />
+              </Label>
               <div className="relative">
                 <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="username"
-                  placeholder="admin"
+                  placeholder={intl.formatMessage({
+                    id: 'login.username.placeholder',
+                  })}
                   className="pl-10 h-11"
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
@@ -79,13 +91,17 @@ export default function Login() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Contraseña</Label>
+              <Label htmlFor="password">
+                <FormattedMessage id="login.password.label" />
+              </Label>
               <div className="relative">
                 <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   id="password"
                   type="password"
-                  placeholder="••••••••"
+                  placeholder={intl.formatMessage({
+                    id: 'login.password.placeholder',
+                  })}
                   className="pl-10 h-11"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -98,13 +114,20 @@ export default function Login() {
               className="w-full h-11 text-base font-semibold transition-all hover:scale-[1.01] active:scale-[0.99]"
               disabled={isLoading}
             >
-              {isLoading ? 'Verificando...' : 'Iniciar Sesión'}
+              {isLoading ? (
+                <FormattedMessage id="login.submit.loading" />
+              ) : (
+                <FormattedMessage id="login.submit.idle" />
+              )}
             </Button>
 
             <div className="pt-4 text-center">
               <p className="text-xs text-muted-foreground">
-                Usar <span className="font-mono font-bold text-red-500">admin/admin</span> para
-                hacer login
+                <FormattedMessage id="login.hint.text" />{' '}
+                <span className="font-mono font-bold text-red-500">
+                  <FormattedMessage id="login.hint.credentials" />
+                </span>{' '}
+                <FormattedMessage id="login.hint.suffix" />
               </p>
             </div>
           </form>

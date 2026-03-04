@@ -3,8 +3,10 @@ import Layout from '@/components/Layout';
 import { useAccounts, useTransfer } from '@/hooks/use-banking';
 import { Send, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useIntl, FormattedMessage } from 'react-intl';
 
 export default function Transfers() {
+  const intl = useIntl();
   const searchParams = new URLSearchParams(window.location.search);
   const defaultFrom = searchParams.get('from');
 
@@ -31,20 +33,20 @@ export default function Transfers() {
     setError(null);
 
     if (!fromAccountId || !toAccountNumber || !amount) {
-      setError('Please fill in all required fields');
+      setError(intl.formatMessage({ id: 'transfers.error.required' }));
       return;
     }
 
     const numAmount = parseFloat(amount);
     if (isNaN(numAmount) || numAmount <= 0) {
-      setError('Please enter a valid amount greater than 0');
+      setError(intl.formatMessage({ id: 'transfers.error.amount' }));
       return;
     }
 
     // Check balance
     const selectedAccount = accounts?.find((a) => a.id.toString() === fromAccountId);
     if (selectedAccount && numAmount > parseFloat(selectedAccount.balance)) {
-      setError('Insufficient funds in selected account');
+      setError(intl.formatMessage({ id: 'transfers.error.insufficient' }));
       return;
     }
 
@@ -68,7 +70,9 @@ export default function Transfers() {
         },
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         onError: (err: any) => {
-          setError(err.message || 'Transfer failed. Please try again.');
+          setError(
+            err.message || intl.formatMessage({ id: 'transfers.error.generic' })
+          );
         },
       }
     );
@@ -78,8 +82,12 @@ export default function Transfers() {
     <Layout>
       <div className=" mx-auto">
         <div className="mb-8">
-          <h2 className="font-display text-3xl font-bold text-foreground">Send Money</h2>
-          <p className="text-muted-foreground mt-1">Transfer funds instantly to any account.</p>
+          <h2 className="font-display text-3xl font-bold text-foreground">
+            <FormattedMessage id="transfers.title" />
+          </h2>
+          <p className="text-muted-foreground mt-1">
+            <FormattedMessage id="transfers.subtitle" />
+          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -108,9 +116,11 @@ export default function Transfers() {
                   >
                     <CheckCircle2 className="w-5 h-5 mt-0.5 shrink-0" />
                     <div>
-                      <p className="text-sm font-bold">Transfer Successful!</p>
+                      <p className="text-sm font-bold">
+                        <FormattedMessage id="transfers.success.title" />
+                      </p>
                       <p className="text-xs mt-1 opacity-90">
-                        The funds have been sent and your balance is updated.
+                        <FormattedMessage id="transfers.success.description" />
                       </p>
                     </div>
                   </motion.div>
@@ -120,14 +130,16 @@ export default function Transfers() {
               <form onSubmit={handleSubmit} className="space-y-6">
                 {/* From Account */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground block">From Account</label>
+                  <label className="text-sm font-medium text-foreground block">
+                    <FormattedMessage id="transfers.fromAccount.label" />
+                  </label>
                   <select
                     value={fromAccountId}
                     onChange={(e) => setFromAccountId(e.target.value)}
                     className="w-full px-4 py-3.5 rounded-xl bg-background border-2 border-border text-foreground focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all appearance-none"
                   >
                     <option value="" disabled>
-                      Select an account
+                      {intl.formatMessage({ id: 'transfers.fromAccount.placeholder' })}
                     </option>
                     {accounts?.map((acc) => (
                       <option key={acc.id} value={acc.id}>
@@ -141,23 +153,27 @@ export default function Transfers() {
                 {/* To Account */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground block">
-                    Recipient Account Number
+                    <FormattedMessage id="transfers.toAccount.label" />
                   </label>
                   <input
                     type="text"
                     value={toAccountNumber}
                     onChange={(e) => setToAccountNumber(e.target.value)}
-                    placeholder="e.g. 9876543210"
+                    placeholder={intl.formatMessage({
+                      id: 'transfers.toAccount.placeholder',
+                    })}
                     className="w-full px-4 py-3.5 rounded-xl bg-background border-2 border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
                   />
                 </div>
 
                 {/* Amount */}
                 <div className="space-y-2">
-                  <label className="text-sm font-medium text-foreground block">Amount</label>
+                  <label className="text-sm font-medium text-foreground block">
+                    <FormattedMessage id="transfers.amount.label" />
+                  </label>
                   <div className="relative">
                     <span className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground font-medium text-lg">
-                      $
+                      {intl.formatMessage({ id: 'transfers.amount.currencySymbol' })}
                     </span>
                     <input
                       type="number"
@@ -165,7 +181,9 @@ export default function Transfers() {
                       min="0.01"
                       value={amount}
                       onChange={(e) => setAmount(e.target.value)}
-                      placeholder="0.00"
+                      placeholder={intl.formatMessage({
+                        id: 'transfers.amount.placeholder',
+                      })}
                       className="w-full pl-8 pr-4 py-3.5 rounded-xl bg-background border-2 border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all font-display text-lg"
                     />
                   </div>
@@ -174,13 +192,15 @@ export default function Transfers() {
                 {/* Description */}
                 <div className="space-y-2">
                   <label className="text-sm font-medium text-foreground block">
-                    Note (Optional)
+                    <FormattedMessage id="transfers.note.label" />
                   </label>
                   <input
                     type="text"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder="What is this for?"
+                    placeholder={intl.formatMessage({
+                      id: 'transfers.note.placeholder',
+                    })}
                     className="w-full px-4 py-3.5 rounded-xl bg-background border-2 border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary/10 transition-all"
                   />
                 </div>
@@ -196,7 +216,7 @@ export default function Transfers() {
                   ) : (
                     <>
                       <Send className="w-5 h-5" />
-                      Send Securely
+                      <FormattedMessage id="transfers.submit.idle" />
                     </>
                   )}
                 </button>
@@ -207,30 +227,46 @@ export default function Transfers() {
           {/* Info Side */}
           <div className="space-y-6">
             <div className="bg-card/50 rounded-2xl border border-border p-6 text-sm">
-              <h4 className="font-display font-bold text-foreground mb-3">Transfer Limits</h4>
+              <h4 className="font-display font-bold text-foreground mb-3">
+                <FormattedMessage id="transfers.limits.title" />
+              </h4>
               <ul className="space-y-2 text-muted-foreground">
                 <li className="flex justify-between">
-                  <span>Daily Limit</span>{' '}
-                  <span className="font-medium text-foreground">$10,000.00</span>
+                  <span>
+                    <FormattedMessage id="transfers.limits.daily" />
+                  </span>{' '}
+                  <span className="font-medium text-foreground">
+                    <FormattedMessage id="transfers.limits.daily.value" />
+                  </span>
                 </li>
                 <li className="flex justify-between">
-                  <span>Per Transaction</span>{' '}
-                  <span className="font-medium text-foreground">$5,000.00</span>
+                  <span>
+                    <FormattedMessage id="transfers.limits.perTx" />
+                  </span>{' '}
+                  <span className="font-medium text-foreground">
+                    <FormattedMessage id="transfers.limits.perTx.value" />
+                  </span>
                 </li>
                 <li className="flex justify-between">
-                  <span>Transfer Fee</span>{' '}
-                  <span className="font-medium text-emerald-500">Free</span>
+                  <span>
+                    <FormattedMessage id="transfers.limits.fee" />
+                  </span>{' '}
+                  <span className="font-medium text-emerald-500">
+                    <FormattedMessage id="transfers.limits.fee.value" />
+                  </span>
                 </li>
               </ul>
             </div>
 
             <div className="bg-primary/5 rounded-2xl border border-primary/10 p-6">
               <h4 className="font-display font-bold text-primary mb-2 flex items-center gap-2">
-                <AlertCircle className="w-4 h-4" /> Secure Transfer
+                <AlertCircle className="w-4 h-4" />{' '}
+                <span>
+                  <FormattedMessage id="transfers.security.title" />
+                </span>
               </h4>
               <p className="text-sm text-muted-foreground leading-relaxed">
-                Your transaction is protected with military-grade 256-bit encryption. Funds are
-                instantly deducted and usually arrive within seconds to oBank accounts.
+                <FormattedMessage id="transfers.security.description" />
               </p>
             </div>
           </div>

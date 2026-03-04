@@ -3,6 +3,7 @@ import { User, Smartphone, ChevronRight } from 'lucide-react';
 import { useCustomer } from '@/hooks/use-banking';
 import { useLocation } from 'wouter';
 import { clearAccessToken } from '@/lib/auth';
+import { FormattedMessage } from 'react-intl';
 
 export default function Settings() {
   const { data: customer } = useCustomer();
@@ -15,10 +16,10 @@ export default function Settings() {
 
   const sections = [
     {
-      title: 'Profile',
+      titleId: 'settings.profile.title',
       items: [
-        { icon: User, label: 'Personal Information', value: customer?.name },
-        { icon: Smartphone, label: 'Contact Details', value: customer?.email },
+        { icon: User, labelId: 'settings.profile.personalInfo', value: customer?.name },
+        { icon: Smartphone, labelId: 'settings.profile.contactDetails', value: customer?.email },
       ],
     },
     // {
@@ -40,9 +41,8 @@ export default function Settings() {
     <Layout>
       <div className="mx-auto space-y-8">
         <div>
-          <h2 className="font-display text-3xl font-bold text-foreground">Settings</h2>
           <p className="text-muted-foreground mt-1">
-            Manage your account preferences and security.
+            <FormattedMessage id="settings.subtitle" />
           </p>
         </div>
 
@@ -54,7 +54,7 @@ export default function Settings() {
             >
               <div className="px-6 py-4 border-b border-border bg-muted/20">
                 <h3 className="font-display font-semibold text-lg text-foreground">
-                  {section.title}
+                  <FormattedMessage id={section.titleId} />
                 </h3>
               </div>
               <div className="divide-y divide-border">
@@ -68,7 +68,9 @@ export default function Settings() {
                         <item.icon className="w-5 h-5" />
                       </div>
                       <div>
-                        <p className="font-medium text-foreground">{item.label}</p>
+                        <p className="font-medium text-foreground">
+                          <FormattedMessage id={item.labelId} />
+                        </p>
                         {item.value && (
                           <p className="text-sm text-muted-foreground mt-0.5">{item.value}</p>
                         )}
@@ -87,7 +89,7 @@ export default function Settings() {
             className="text-destructive font-medium hover:underline text-sm"
             onClick={handleSignOut}
           >
-            Sign Out
+            <FormattedMessage id="settings.signout" />
           </button>
         </div>
       </div>

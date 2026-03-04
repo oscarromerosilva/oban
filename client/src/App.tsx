@@ -1,11 +1,15 @@
 import { Switch, Route, useLocation } from 'wouter';
 import type { ReactNode } from 'react';
+import { useState } from 'react';
+import { IntlProvider } from 'react-intl';
 import { queryClient } from './lib/queryClient';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { Toaster } from '@/components/ui/toaster';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import NotFound from '@/pages/not-found';
 import { isAuthenticated } from '@/lib/auth';
+import { IntlContext } from '@/i18n/IntlContext';
+import { messages, type SupportedLocale } from '@/i18n/messages';
 
 // Pages
 import Dashboard from './pages/Dashboard';
@@ -59,12 +63,18 @@ function Router() {
 }
 
 function App() {
+  const [locale, setLocale] = useState<SupportedLocale>('es');
+
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Router />
-      </TooltipProvider>
+      <IntlContext.Provider value={{ locale, setLocale }}>
+        <IntlProvider locale={locale} messages={messages[locale]}>
+          <TooltipProvider>
+            <Toaster />
+            <Router />
+          </TooltipProvider>
+        </IntlProvider>
+      </IntlContext.Provider>
     </QueryClientProvider>
   );
 }
