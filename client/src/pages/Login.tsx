@@ -30,7 +30,7 @@ export default function Login() {
 
     // Fake authentication delay
     setTimeout(() => {
-      if (username === 'admin' && password === 'admin') {
+      if (username === 'admin' && password === 'obankadmin') {
         setAccessToken('mock_access_token');
         toast({
           title: intl.formatMessage({ id: 'login.toast.success.title' }),
@@ -120,16 +120,6 @@ export default function Login() {
                 <FormattedMessage id="login.submit.idle" />
               )}
             </Button>
-
-            <div className="pt-4 text-center">
-              <p className="text-xs text-muted-foreground">
-                <FormattedMessage id="login.hint.text" />{' '}
-                <span className="font-mono font-bold text-red-500">
-                  <FormattedMessage id="login.hint.credentials" />
-                </span>{' '}
-                <FormattedMessage id="login.hint.suffix" />
-              </p>
-            </div>
           </form>
         </CardContent>
       </Card>

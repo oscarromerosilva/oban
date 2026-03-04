@@ -20,13 +20,12 @@ export const es = {
     'login.submit.idle': 'Iniciar Sesión',
     'login.submit.loading': 'Verificando...',
     'login.hint.text': 'Usar',
-    'login.hint.credentials': 'admin/admin',
     'login.hint.suffix': 'para hacer login',
     'login.toast.success.title': '¡Bienvenido de nuevo!',
     'login.toast.success.description': 'Has iniciado sesión correctamente.',
     'login.toast.error.title': 'Error de acceso',
     'login.toast.error.description':
-      'Credenciales inválidas. Prueba con admin/admin.',
+      'Credenciales inválidas.',
 
     // Dashboard
     'dashboard.greeting': 'Buenos días,',

@@ -20,13 +20,12 @@ export const en = {
   'login.submit.idle': 'Sign In',
   'login.submit.loading': 'Verifying...',
   'login.hint.text': 'Use',
-  'login.hint.credentials': 'admin/admin',
   'login.hint.suffix': 'to log in',
   'login.toast.success.title': 'Welcome back!',
   'login.toast.success.description': 'You have signed in successfully.',
   'login.toast.error.title': 'Sign-in error',
   'login.toast.error.description':
-    'Invalid credentials. Try admin/admin.',
+    'Invalid credentials.',
 
   // Dashboard
   'dashboard.greeting': 'Good morning,',
